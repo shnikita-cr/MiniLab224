@@ -18,9 +18,9 @@ window.addEventListener('load', () => {
   const app = new App(document.getElementById('app'))
   const input = document.getElementById('input')
 
-  input.oninput = (e) => updateName(app, e.target.value)
+  input.onchange  = (e) => updateName(app, e.target.value)
   
   // Дефолтное значение для username
   updateName(app, "x4nth055")
-  
+
 })
