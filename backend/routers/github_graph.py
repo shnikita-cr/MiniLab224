@@ -2,7 +2,7 @@ import requests
 from fastapi import APIRouter
 
 from backend.config import settings
-from backend.utils import add_users_data, get_followers
+from backend.utils import add_users_data, get_followers, get_user_activity
 
 github_router = APIRouter(prefix='/github', tags=['Github'])
 
@@ -33,3 +33,23 @@ async def root(username: str = "x4nth055"):
 @github_router.get("/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"Hello {name}!"}
+
+
+@github_router.get("/followers_count/{name}")
+async def followers_count(name: str):
+    token = settings.GITHUB_API_TOKEN
+    headers = {
+        "authorization": f"token {token}"
+    } if token else {}
+    followers = get_followers(name, headers)
+    return len(followers)
+
+
+@github_router.get("/user_activity/{name}")
+async def user_activity(name: str):
+    token = settings.GITHUB_API_TOKEN
+    headers = {
+        "authorization": f"token {token}"
+    } if token else {}
+    activity = get_user_activity(name, headers)
+    return activity

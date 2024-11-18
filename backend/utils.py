@@ -1,15 +1,6 @@
+from datetime import datetime, timedelta
+
 import requests
-
-
-def get_recursive_followers(response_given, headers, depth=5):
-    lst = []
-    for i in response_given.json():
-        follower = i["login"]
-        followers_url = f"https://api.github.com/users/{follower}/followers"
-        response = requests.get(followers_url, headers=headers)
-        if response.status_code == 200:  # Проверка кода ответа
-            lst.append(response)
-    return lst
 
 
 def get_followers(username, headers):
@@ -41,3 +32,21 @@ def add_users_data(response_json, headers, depth=0):
                 user["followers"] = followers
             repos = get_repositories(user["login"], headers)
             user["size"] = len(repos)
+
+
+def get_user_activity(username, headers):
+    url = f"https://api.github.com/users/{username}/events"
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        rj = response.json()
+        one_week_ago = datetime.now() - timedelta(days=7)
+        events_last_week = [event for event in rj if
+                            datetime.strptime(event['created_at'], "%Y-%m-%dT%H:%M:%SZ") > one_week_ago]
+        activity_count = len(events_last_week)
+        event_types = {}
+        for event in events_last_week:
+            event_types[event["type"]] = event_types.get(event["type"], 0) + 1
+
+        return activity_count, event_types
+    else:
+        return []
