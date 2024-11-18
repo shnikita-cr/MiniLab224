@@ -1,5 +1,6 @@
-
-/.idea
 /backend/__pycache__
+/.idea
 /backend/routers/__pycache__
 /frontend/node_modules
+backend/config.py
+
